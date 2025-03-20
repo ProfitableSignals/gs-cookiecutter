@@ -2,7 +2,9 @@
 name = "{{cookiecutter.project_name}}"
 version = "0.0.1"
 description = "{{cookiecutter.project_description}}"
-authors = [{ name = "{{cookiecutter.author}}", email = "{{cookiecutter.email}}" }]
+authors = [
+    { name = "{{cookiecutter.author}}", email = "{{cookiecutter.email}}" },
+]
 readme = "README.md"
 keywords = ['python']
 requires-python = ">=3.11"
@@ -22,7 +24,9 @@ dev = [
     "ruff>=0.6.9",
     {% if cookiecutter.mkdocs == 'y' %}"mkdocs>=1.4.2",
     "mkdocs-material>=8.5.10",
-    "mkdocstrings[python]>=0.26.1",{% endif %}
+    "mkdocstrings[python]>=0.26.1",{% endif %},
+    "modal",
+    "ipykernel"
 ]
 
 [build-system]
@@ -31,6 +35,10 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 py-modules = ["{{cookiecutter.project_slug}}"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["{{cookiecutter.project_slug}}", "{{cookiecutter.project_slug}}.*"]
 
 [tool.mypy]
 files = ["{{cookiecutter.project_slug}}"]
@@ -49,27 +57,7 @@ addopts = "-v --cov --cov-report term-missing"
 [tool.ruff]
 line-length = 120
 fix = true
-target-version = ['py312']
-include = '\.pyi?$'
-exclude = '''
-(
-  /(
-      \.eggs         # exclude a few common directories in the
-    | \.git          # root of the project
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | _build
-    | buck-out
-    | build
-    | dist
-  )/
-  | foo.py           # also separately exclude a file named foo.py in
-                     # the root of the project
-)
-
-'''
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [
@@ -92,7 +80,8 @@ select = [
     # mccabe
     "C90",
     # pycodestyle
-    "E", "W",
+    "E",
+    "W",
     # pyflakes
     "F",
     # pygrep-hooks
@@ -132,3 +121,25 @@ verbose = 2
 quiet = false
 whitelist-regex = []
 color = true
+
+[[tool.uv.index]]
+name = "growthsignals"
+url = "https://pkgs.dev.azure.com/growthsignals/_packaging/growthsignals/pypi/simple/"
+publish-url = "https://pkgs.dev.azure.com/growthsignals/_packaging/growthsignals/pypi/upload/"
+
+[tool.bumpversion]
+current_version = "0.0.3"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+tag = true
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+commit_args = ""
